@@ -76,8 +76,8 @@ app.post('/login', jsonParser, function (req, res) {
     res.json({ status: 'ok' });
 });
 
-// Corremos el servidor en el puerto 3000
-const port = 3000;
-app.listen(port, () => {
+// Corremos el servidor en el puerto 3000 y lo hacemos accesible para la red pública
+const port = process.env.PORT || 3000;  // Usar el puerto asignado por el entorno (en Render) o el puerto 3000
+app.listen(port, '0.0.0.0', () => {
     console.log(`Aplicación corriendo en http://localhost:${port}`);
 });
