@@ -38,8 +38,9 @@ app.post('/agrega_todo', jsonParser, function (req, res) {
         return;
     }
 
-    const stmt = db.prepare('INSERT INTO todos (todo, created_at) VALUES (?, CURRENT_TIMESTAMP)');
-    stmt.run(todo, function (err) {
+    const created_at = Math.floor(Date.now() / 1000);  // Obtener el Unix timestamp
+    const stmt = db.prepare('INSERT INTO todos (todo, created_at) VALUES (?, ?)');
+    stmt.run(todo, created_at, function (err) {
         if (err) {
             console.error("Error:", err);
             res.status(500).json({ message: 'Error al agregar tarea' });
@@ -49,6 +50,17 @@ app.post('/agrega_todo', jsonParser, function (req, res) {
     });
 
     stmt.finalize();
+});
+
+// Endpoint para listar todas las tareas
+app.get('/listar_todos', (req, res) => {
+    db.all('SELECT * FROM todos', [], (err, rows) => {
+        if (err) {
+            res.status(500).json({ error: err.message });
+            return;
+        }
+        res.status(200).json({ tareas: rows });
+    });
 });
 
 // Endpoint de prueba para verificar que el servidor está corriendo
